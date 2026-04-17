@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>DIY Schedule</title>
+  
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ffb6c1">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DIY Schedule">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<style>
+*{box-sizing:border-box;font-family:system-ui;}
+body{margin:0;background:#ffb6c1;}
+  
+
+#splash{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#ffb6c1;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;
+text-align:center;
+}
+
+.splashText{font-family:cursive;color:#1f2a44;}
+.line1{font-size:34px;font-weight:700;}
+.line2{font-size:18px;margin-top:6px;}
+.line3{font-size:28px;margin-top:6px;font-weight:600;}
+
+.typewriter{
+border-right:3px solid #1f2a44;
+white-space:nowrap;
+overflow:hidden;
+width:0;
+display:inline-block;
+animation:typing 2s steps(12,end) forwards, blink .7s infinite;
+}
+
+.header{
+text-align:center;
+font-weight:1000;
+font-family:cursive;
+margin-bottom:20px;
+font-size:clamp(40px,15vw,60px);
+color:#1f2a44;
+}
+
+.container{
+max-width:1000px;
+margin:auto;
+padding:20px;
+}
+
+@keyframes typing{
+from{width:0}
+to{width:160px}
+}
+
+@keyframes blink{
+50%{border-color:transparent}
+}
+
+.card{
+background:white;
+padding:16px;
+border-radius:14px;
+margin-top:12px;
+box-shadow:0 8px 24px rgba(0,0,0,0.15);
+}
+
+label{
+font-size:13px;
+font-weight:600;
+color:#1f2a44;
+display:block;
+margin-top:10px;
+}
+
+input,select,button{
+width:100%;
+height:46px;
+padding:10px;
+margin-top:5px;
+border-radius:10px;
+border:1px solid #ddd;
+}
+
+button{
+background:#1f2a44;
+color:white;
+font-weight:600;
+cursor:pointer;
+}
+
+.tabs{
+display:flex;
+gap:10px;
+}
+
+.tabs button{
+flex:1;
+}
+
+/* DOCTOR CARD - CLEAN PROFESSIONAL STYLE */
+.doc{
+background:#ffffff;
+padding:20px;
+border-radius:20px;
+margin-top:16px;
+box-shadow:0 12px 30px rgba(0,0,0,0.08);
+border:1px solid #eee;
+position:relative;
+}
+
+/* header layout */
+.profileRow{
+display:flex;
+gap:16px;
+align-items:flex-start;
+}
+
+/* image */
+.profileImage{
+width:90px;
+height:90px;
+border-radius:18px;
+object-fit:cover;
+border:3px solid #f1f1f1;
+}
+
+/* right side */
+.profileInfo{
+flex:1;
+}
+
+/* name */
+.doctorName{
+font-size:20px;
+font-weight:800;
+color:#1f2a44;
+margin-top:4px;
+}
+
+/* category badge */
+.badge{
+background:#1f2a44;
+color:white;
+padding:5px 12px;
+border-radius:999px;
+font-size:12px;
+display:inline-block;
+margin-bottom:8px;
+}
+
+/* room */
+.meta{
+font-size:13px;
+color:#666;
+margin-bottom:12px;
+}
+
+/* HOSPITAL SECTION */
+.hospitalSection{
+margin-top:14px;
+padding:12px;
+border-radius:12px;
+background:#f8f9fc;
+border:1px solid #eef1f5;
+}
+
+/* hospital title */
+.hospitalHeader{
+font-weight:700;
+color:#1f2a44;
+margin-bottom:6px;
+}
+
+/* schedule grid */
+.scheduleGrid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+gap:6px;
+}
+
+/* each schedule */
+.scheduleItem{
+font-size:12px;
+background:white;
+padding:6px 8px;
+border-radius:8px;
+border:1px solid #eee;
+}
+
+/* hidden by default */
+.iconBtn{
+position:absolute;
+top:12px;
+right:12px;
+display:flex;
+gap:6px;
+opacity:0;
+transform:translateX(20px);
+pointer-events:none;
+transition:0.25s ease;
+}
+
+/* show when active */
+.doc.show-actions .iconBtn{
+opacity:1;
+transform:translateX(0);
+pointer-events:auto;
+}
+.iconBtn button{
+width:32px;
+height:32px;
+border-radius:50%;
+border:none;
+cursor:pointer;
+}
+
+.iconBtn button:first-child{
+background:#3498db;
+color:white;
+}
+
+.iconBtn button:last-child{
+background:#e74c3c;
+color:white;
+}
+.profileRow{
+display:flex;
+gap:14px;
+align-items:flex-start;
+margin-top:10px;
+}
+
+.profileImage{
+width:80px;
+height:80px;
+border-radius:16px;
+object-fit:cover;
+border:3px solid #ffb6c1;
+cursor:pointer;
+flex-shrink:0;
+}
+
+.profileInfo{
+flex:1;
+}
+
+#imageModal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.8);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:99999;
+padding:20px;
+}
+
+#imageModal img{
+max-width:95%;
+max-height:95%;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+  
+/* HOSPITAL SECTION - COLLAPSIBLE */
+.hospitalSection{
+margin-top:12px;
+border-radius:12px;
+border:1px solid #e5e7eb;
+overflow:hidden;
+background:#fff;
+}
+
+/* clickable header */
+.hospitalHeader{
+padding:12px;
+font-weight:700;
+cursor:pointer;
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:#f8f9fc;
+}
+
+.hospitalHeader:hover{
+background:#eef2f7;
+}
+
+/* arrow */
+.arrow{
+font-size:14px;
+transition:0.2s;
+}
+
+/* content hidden by default */
+.hospitalContent{
+max-height:0;
+overflow:hidden;
+transition:max-height 0.3s ease;
+padding:0 12px;
+}
+
+/* expanded state */
+.hospitalSection.active .hospitalContent{
+max-height:500px;
+padding:12px;
+}
+
+/* rotate arrow */
+.hospitalSection.active .arrow{
+transform:rotate(90deg);
+}
+
+/* schedule grid */
+.scheduleGrid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+gap:8px;
+}
+
+/* schedule box */
+.scheduleItem{
+background:#f9fafc;
+padding:8px;
+border-radius:8px;
+font-size:12px;
+border:1px solid #eee;
+text-align:center;
+}
+  
+/* separation between header and hospitals */
+.profileRow{
+display:flex;
+gap:16px;
+align-items:flex-start;
+margin-bottom:14px; /* important */
+}
+
+/* subtle divider */
+.doc::after{
+content:"";
+display:block;
+height:1px;
+background:#eee;
+margin:12px 0;
+}
+  input, select, button {
+font-size:16px;
+}
+  
+</style>
+
+</head>
+
+<body>
+
+<div id="splash">
+  <div class="splashText">
+    <div class="line1">DIY Schedule</div>
+    <div class="line2">Made for</div>
+    <div class="line3 typewriter">Jiciel</div>
+  </div>
+</div>
+
+<div class="container" id="app" style="display:none">
+
+<div class="header">DIY Schedule</div>
+
+<div class="tabs">
+<button onclick="showTab('add')">Add</button>
+<button onclick="showTab('search')">Search</button>
+<button onclick="showTab('view')">View</button>
+</div>
+
+<div id="hospitalManager" class="card">
+<h3>Hospital Manager</h3>
+
+<label>Hospital Name</label>
+<input id="newHospital">
+
+<button onclick="addHospital()">➕ Add Hospital</button>
+
+<div id="hospitalList"></div>
+</div>
+
+<div id="add" class="card">
+
+<label>Name</label>
+<input id="name">
+
+<label>Category</label>
+<input id="category">
+
+<label>Room Number</label>
+<input id="roomNumber" placeholder="e.g. Room 203">
+
+<label>Profile Picture</label>
+<input type="file" id="profilePicture" accept="image/*">
+
+<label>Hospital</label>
+<select id="hospitalSelect"></select>
+
+<button onclick="addHospitalToDoctor()">➕ Add Hospital Schedule</button>
+
+<div id="tempSchedules"></div>
+
+<button onclick="saveDoctor()">💾 Save Doctor</button>
+<button onclick="cancelEdit()" style="background:#777;">❌ Cancel</button>
+
+</div>
+
+
+<div id="search" class="card" style="display:none">
+
+<label>Name</label>
+<input id="searchName" oninput="liveSearch()">
+
+
+
+<label>Category</label>
+<input id="searchCategory" oninput="liveSearch()">
+
+
+<label>Hospital</label>
+<select id="searchHospital" onchange="searchDoctors()"></select>
+  
+<label>Day</label>
+<select id="searchDay" onchange="searchDoctors()">
+ 
+<option value="">All Days</option>
+<option>Monday</option>
+<option>Tuesday</option>
+<option>Wednesday</option>
+<option>Thursday</option>
+<option>Friday</option>
+<option>Saturday</option>
+<option>Sunday</option>
+</select>
+
+
+
+<div id="results"></div>
+</div>
+
+<div id="view" class="card" style="display:none">
+
+<label>Select Day</label>
+<select id="viewDay" onchange="renderView()">
+<option>Monday</option>
+<option>Tuesday</option>
+<option>Wednesday</option>
+<option>Thursday</option>
+<option>Friday</option>
+<option>Saturday</option>
+<option>Sunday</option>
+</select>
+
+<div class="actionBtns">
+<button onclick="openFullReport()">📄 View Full Report</button>
+</div>
+
+<div id="viewBox"></div>
+
+</div>
+
+</div>
+
+<div id="imageModal" onclick="closeImageModal()">
+  <img id="zoomedImage">
+</div>
+
+<script>
+function toggleHospital(el){
+el.classList.toggle("active");
+}
+const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+
+let doctors=JSON.parse(localStorage.getItem("doctors")||"[]");
+let hospitals=JSON.parse(localStorage.getItem("hospitals")||"[]");
+
+let editIndex=null;
+let searchTimeout;
+function save(){
+localStorage.setItem("doctors",JSON.stringify(doctors));
+localStorage.setItem("hospitals",JSON.stringify(hospitals));
+}
+
+window.onload=()=>{
+renderHospitals();
+loadHospitals();
+loadSearchHospitals();
+
+setTimeout(()=>{
+document.getElementById("splash").style.display="none";
+document.getElementById("app").style.display="block";
+},2000);
+};
+  
+
+function liveSearch(){
+clearTimeout(searchTimeout);
+searchTimeout = setTimeout(searchDoctors, 300);
+}
+function showTab(tab){
+document.getElementById("add").style.display=tab==="add"?"block":"none";
+document.getElementById("search").style.display=tab==="search"?"block":"none";
+document.getElementById("view").style.display=tab==="view"?"block":"none";
+document.getElementById("hospitalManager").style.display=tab==="add"?"block":"none";
+
+if(tab==="search"){
+loadSearchHospitals();
+searchDoctors();
+}
+}
+function addHospital(){
+let name=document.getElementById("newHospital").value.trim();
+if(!name) return;
+
+if(hospitals.includes(name)) return alert("Exists");
+
+hospitals.push(name);
+save();
+document.getElementById("newHospital").value="";
+renderHospitals();
+loadHospitals();
+loadSearchHospitals();
+}
+
+function deleteHospital(i){
+if(!confirm("Are you sure you want to delete this hospital?")) return;
+
+let removed=hospitals[i];
+hospitals.splice(i,1);
+
+doctors.forEach(d=>{
+d.hospitals=d.hospitals.filter(h=>h.name!==removed);
+});
+
+save();
+renderHospitals();
+loadHospitals();
+loadSearchHospitals();
+}
+
+function renderHospitals(){
+document.getElementById("hospitalList").innerHTML="";
+hospitals.map((h,i)=>`
+<div style="display:flex;justify-content:space-between;padding:10px;background:#fff;margin-top:8px;border-radius:10px;">
+<span>🏥 ${h}</span>
+<button onclick="deleteHospital(${i})" style="width:35px;height:35px;border-radius:50%;background:#c0392b;color:#fff;">🗑</button>
+</div>
+`).join("");
+}
+
+function loadHospitals(){
+let sel=document.getElementById("hospitalSelect");
+sel.innerHTML="<option value=''>Select Hospital</option>";
+hospitals.forEach(h=>sel.innerHTML+=`<option>${h}</option>`);
+}
+
+function loadSearchHospitals(){
+let sel=document.getElementById("searchHospital");
+sel.innerHTML="<option value=''>All Hospitals</option>";
+hospitals.forEach(h=>sel.innerHTML+=`<option value="${h.toLowerCase()}">${h}</option>`);
+}
+
+function addHospitalToDoctor(){
+let h=document.getElementById("hospitalSelect").value;
+if(!h) return;
+
+let block=document.createElement("div");
+block.className="card";
+
+block.innerHTML=`<b>${h}</b><div></div>`;
+
+days.forEach(d=>{
+block.querySelector("div").innerHTML+=`
+<div>
+<label>${d}</label>
+<input data-day="${d}" placeholder="Time">
+</div>`;
+});
+
+document.getElementById("tempSchedules").appendChild(block);
+}
+
+function saveDoctor(){
+let name=document.getElementById("name").value.trim();
+let category=document.getElementById("category").value.trim();
+let roomNumber=document.getElementById("roomNumber").value.trim();
+let profileInput=document.getElementById("profilePicture");
+
+if(!name) return alert("Doctor name required");
+
+let saveData=(profileImage)=>{
+let blocks=document.querySelectorAll("#tempSchedules .card");
+let data=[];
+
+blocks.forEach(b=>{
+let hospital=b.querySelector("b").innerText;
+let schedule={};
+
+b.querySelectorAll("input").forEach(i=>{
+if(i.value) schedule[i.dataset.day]=i.value;
+});
+
+data.push({name:hospital,schedule});
+});
+
+let oldImage = editIndex!==null ? doctors[editIndex].profileImage || "" : "";
+
+let newDoctor={
+name,
+category,
+roomNumber,
+profileImage: profileImage || oldImage,
+hospitals:data
+};
+
+if(editIndex!==null){
+doctors[editIndex]=newDoctor;
+editIndex=null;
+}else{
+doctors.push(newDoctor);
+}
+
+save();
+resetForm();
+alert("Saved!");
+};
+
+if(profileInput.files[0]){
+let reader=new FileReader();
+reader.onload=function(e){
+saveData(e.target.result);
+};
+reader.readAsDataURL(profileInput.files[0]);
+}else{
+saveData("");
+}
+}
+
+function resetForm(){
+document.getElementById("name").value="";
+document.getElementById("category").value="";
+document.getElementById("roomNumber").value="";
+document.getElementById("profilePicture").value="";
+document.getElementById("tempSchedules").innerHTML="";
+}
+
+function cancelEdit(){
+resetForm();
+editIndex=null;
+alert("Cancelled");
+}
+
+function searchDoctors(){
+let name=document.getElementById("searchName").value.toLowerCase();
+let category=document.getElementById("searchCategory").value.toLowerCase();
+let hospital=document.getElementById("searchHospital").value;
+let day=document.getElementById("searchDay").value;
+
+let filtered = doctors
+.filter(d => {
+if(name && !d.name.toLowerCase().includes(name)) return false;
+if(category && !d.category.toLowerCase().includes(category)) return false;
+
+if(hospital){
+let hasHospital=(d.hospitals||[]).some(h=>h.name.toLowerCase()===hospital);
+if(!hasHospital) return false;
+}
+return true;
+})
+.sort((a,b)=>a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+
+let output = filtered.map((d)=>{
+let realIndex = doctors.indexOf(d);
+
+/* ✅ skip doctor if no schedule for selected day */
+if(day){
+let hasSchedule = (d.hospitals || []).some(h =>
+Object.keys(h.schedule || {}).includes(day)
+);
+if(!hasSchedule) return "";
+}
+
+return `
+<div class="doc">
+
+<div class="iconBtn">
+<button onclick="editDoctor(${realIndex})">✏️</button>
+<button onclick="deleteDoctor(${realIndex})">🗑</button>
+</div>
+
+<div class="profileRow">
+
+<img src="${d.profileImage || 'https://via.placeholder.com/90'}"
+class="profileImage"
+onclick="openImageModal('${d.profileImage || 'https://via.placeholder.com/300'}')">
+
+<div class="profileInfo">
+<span class="badge">${d.category || "General"}</span>
+<div class="doctorName">👨‍⚕️ ${d.name}</div>
+<div class="meta">📍 Room: ${d.roomNumber || "N/A"}</div>
+</div>
+
+</div>
+  
+  
+
+${(d.hospitals||[])
+.filter(h=>!hospital || h.name.toLowerCase()===hospital)
+.map(h=>{
+let sched = Object.entries(h.schedule||{})
+.filter(s=>!day || s[0]===day);
+
+if(!sched.length) return "";
+
+return `
+<div class="hospitalSection" style="cursor:default">
+<div class="hospitalHeader" style="pointer-events:none">
+<span>🏥 ${h.name}</span>
+</div>
+
+<div class="hospitalContent" style="max-height:none;padding:12px;">
+<div class="scheduleGrid">
+${sched.map(s=>`
+<div class="scheduleItem">
+<b>${s[0]}</b><br>${s[1]}
+</div>`).join("")}
+</div>
+</div>
+</div>`;
+}).join("")}
+
+</div>
+`;
+
+}).join("");
+
+
+/* ✅ MUST BE HERE (outside map) */
+document.getElementById("results").innerHTML =
+output || "<div class='card'>No results found</div>";
+}
+function editDoctor(i){
+let d=doctors[i];
+editIndex=i;
+
+document.getElementById("name").value=d.name;
+document.getElementById("category").value=d.category;
+document.getElementById("roomNumber").value=d.roomNumber||"";
+document.getElementById("profilePicture").value="";
+document.getElementById("tempSchedules").innerHTML="";
+
+(d.hospitals||[]).forEach(h=>{
+let block=document.createElement("div");
+block.className="card";
+
+block.innerHTML=`<b>${h.name}</b><div></div>`;
+
+days.forEach(day=>{
+block.querySelector("div").innerHTML+=`
+<div>
+<label>${day}</label>
+<input data-day="${day}" value="${h.schedule?.[day]||''}">
+</div>`;
+});
+
+document.getElementById("tempSchedules").appendChild(block);
+});
+
+showTab("add");
+}
+
+function deleteDoctor(i){
+if(confirm("Are you sure you want to delete this doctor?")){
+doctors.splice(i,1);
+save();
+searchDoctors();
+renderView();
+}
+}
+
+function openImageModal(src){
+document.getElementById("zoomedImage").src=src;
+document.getElementById("imageModal").style.display="flex";
+}
+
+function closeImageModal(){
+document.getElementById("imageModal").style.display="none";
+}
+
+function renderView(){
+let day=document.getElementById("viewDay").value;
+
+let list=doctors
+.filter(d=>
+(d.hospitals||[]).some(h=>h.schedule?.[day])
+)
+.sort((a,b)=>a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+
+document.getElementById("viewBox").innerHTML =
+list.map(d=>{
+
+return `
+<div class="doc">
+
+<div class="profileRow">
+
+<img src="${d.profileImage || 'https://via.placeholder.com/90'}"
+class="profileImage"
+onclick="openImageModal('${d.profileImage || 'https://via.placeholder.com/300'}')">
+
+<div class="profileInfo">
+
+<span class="badge">${d.category || "General"}</span>
+
+<div class="doctorName">👨‍⚕️ ${d.name}</div>
+
+<div class="meta">📍 Room: ${d.roomNumber || "N/A"}</div>
+
+</div>
+</div>
+
+${(d.hospitals||[]).map(h=>{
+let sched=Object.entries(h.schedule||{})
+.filter(s=>s[0]===day);
+
+return sched.length ? `
+<div class="hospitalSection" onclick="toggleHospital(this)">
+
+<div class="hospitalHeader">
+<span>🏥 ${h.name}</span>
+<span class="arrow">▶</span>
+</div>
+
+<div class="hospitalContent">
+<div class="scheduleGrid">
+${sched.map(s=>`
+<div class="scheduleItem">
+<b>${s[0]}</b><br>${s[1]}
+</div>
+`).join("")}
+</div>
+</div>
+
+</div>` : "";
+}).join("")}
+
+</div>
+`;
+}).join("") || "<div class='card'>No schedules</div>";
+}
+
+function openFullReport(){
+
+let sorted=[...doctors].sort((a,b)=>
+a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+);
+
+let content = `
+<div style="font-family:Arial;padding:20px;background:white;">
+
+<h1 style="text-align:center;">📄 Full Doctor Schedule Report</h1>
+
+<div style="text-align:center;font-size:13px;color:#555;margin-bottom:20px;">
+Generated on: ${new Date().toLocaleString()}
+</div>
+
+${sorted.map(d=>`
+<div style="
+border:1px solid #ddd;
+border-radius:12px;
+padding:15px;
+margin-bottom:15px;
+page-break-inside:avoid;
+break-inside:avoid;
+">
+
+<div style="display:flex;gap:10px;align-items:center;margin-bottom:10px;">
+<img src="${d.profileImage || 'https://via.placeholder.com/60'}"
+style="width:60px;height:60px;border-radius:10px;object-fit:cover;">
+<div>
+<div style="font-size:16px;font-weight:bold;">👨‍⚕️ ${d.name}</div>
+<div style="font-size:12px;color:#555;">
+${d.category || "General"} | Room: ${d.roomNumber || "N/A"}
+</div>
+</div>
+</div>
+
+${(d.hospitals || []).map(h=>`
+<div style="
+background:#f9fafc;
+padding:10px;
+margin-top:10px;
+border-radius:8px;
+border:1px solid #eee;
+">
+
+<div style="font-weight:600;">🏥 ${h.name}</div>
+
+${Object.entries(h.schedule || {}).length ? 
+Object.entries(h.schedule).map(s=>`
+<div style="font-size:12px;margin-left:10px;">
+• <b>${s[0]}</b>: ${s[1]}
+</div>
+`).join("")
+:
+"<div style='font-size:12px;'>No schedule</div>"
+}
+
+</div>
+`).join("")}
+
+</div>
+`).join("")}
+
+</div>
+`;
+
+let element = document.createElement("div");
+element.innerHTML = content;
+
+/* IMPORTANT: force render */
+document.body.appendChild(element);
+
+setTimeout(() => {
+
+let opt = {
+margin: 0.3,
+filename: 'Doctor_Schedule_Report.pdf',
+image: { type: 'jpeg', quality: 1 },
+html2canvas: { scale: 3, useCORS: true },
+jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+};
+
+html2pdf().set(opt).from(element).save().then(() => {
+document.body.removeChild(element);
+});
+
+}, 300);
+}
+  
+  let startX = 0;
+
+/* swipe */
+document.addEventListener("touchstart",(e)=>{
+let doc = e.target.closest(".doc");
+if(!doc) return;
+startX = e.touches[0].clientX;
+});
+
+document.addEventListener("touchend",(e)=>{
+let doc = e.target.closest(".doc");
+if(!doc) return;
+
+let diff = e.changedTouches[0].clientX - startX;
+
+document.querySelectorAll(".doc").forEach(d=>{
+if(d !== doc) d.classList.remove("show-actions");
+});
+
+if(diff < -40){
+doc.classList.add("show-actions");
+}
+if(diff > 40){
+doc.classList.remove("show-actions");
+}
+});
+
+/* tap fallback (iPad + desktop) */
+document.addEventListener("click",(e)=>{
+let doc = e.target.closest(".doc");
+
+if(!doc){
+document.querySelectorAll(".doc").forEach(d=>{
+d.classList.remove("show-actions");
+});
+return;
+}
+
+/* prevent edit/delete buttons from closing immediately */
+if(e.target.closest(".iconBtn")) return;
+
+doc.classList.toggle("show-actions");
+});
+if ("serviceWorker" in navigator) {
+window.addEventListener("load", () => {
+navigator.serviceWorker.register("./sw.js", { scope: "./" })
+.then(() => console.log("Service Worker Registered"))
+.catch(err => console.log("SW error:", err));
+});
+
+}
+  document.addEventListener("click", (e) => {
+  let doc = e.target.closest(".doc");
+
+  if (!doc) {
+    document.querySelectorAll(".doc")
+      .forEach(d => d.classList.remove("show-actions"));
+    return;
+  }
+
+  doc.classList.toggle("show-actions");
+});
+  
+</script>
+
+</body>
+</html>
